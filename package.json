@@ -19,7 +19,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^5.15.1"
+    "prisma": "^5.15.1",
+    "railway": "^2.0.17"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6"
