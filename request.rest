@@ -1,0 +1,15 @@
+GET http://localhost:3000/api/auth/users
+Authorization: Bearer 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsIm5hbWUiOiJiaW50YW5nIiwiZW1haWwiOiJiaW50YW5nQGdtYWlsLmNvbSIsImlhdCI6MTcxOTY3NTkyNiwiZXhwIjoxNzE5Njc1OTQ2fQ.tfXKyrEt8W-KyQ0o4tWtZrKJJvIvFHFAB7qGJw8jMC0
+
+###
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "bintang2@gmail.com",
+    "password": "123"
+}
+
+###
+GET http://localhost:3000/api/refresh-token
