@@ -1,5 +1,5 @@
 import { prisma } from "../config/prisma.js";
-import { findEmailUser, refreshTokenUser } from "../models/user.model.js";
+import { findEmailUser, getUserIdModel, putUserModel, refreshTokenUser } from "../models/user.model.js";
 import { comparePassword, hashPassword } from "../utils/hashPasswords.js";
 import {
   generateAccessToken,
@@ -9,7 +9,13 @@ import {
 export const registerUserController = async (req, res) => {
   try {
     const { name, email, image, password, confirmPassword, role } = req.body;
-    const hashedPassword = await hashPassword(password, confirmPassword, res);
+    if (password !== confirmPassword) {
+      res.status(400).json({
+        message: "Passwords does not match",
+      });
+      return;
+    }
+    const hashedPassword = await hashPassword(password);
     const existedUser = await findEmailUser(email);
     if (existedUser) {
       res.status(409).json({
@@ -107,3 +113,33 @@ export const logoutUserController = async (req, res) => {
       console.log(error);
   }
 }
+
+// export const userProfileDetail =async (req, res) => {
+// try {
+//   const {id} = req.params;
+//   const findedUser = await getUserIdModel(id);
+//   res.json({
+//     data: findedUser
+//   })
+// } catch (error) {
+//   console.log(error);
+// }
+// }
+
+// export const editUserProfileController = async (req, res) => {
+//   try {
+//     const {id} = req.params;
+//     const {name, email, image, password} = req.body;
+//     const updateUser = await putUserModel({
+//       name,
+//       email,
+//       image,
+//       password,
+//     });
+//     res.json({
+
+//     })
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }

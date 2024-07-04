@@ -6,13 +6,14 @@ import {
   getUserModel,
   putUserModel,
 } from "../models/user.model.js";
+import { hashPassword } from "../utils/hashPasswords.js";
 
 export const getUserController = async (req, res) => {
   const users = await getUserModel();
-  if(!users) {
+  if (!users) {
     res.status(404).json({
-      message: "Users not found"
-    })
+      message: "Users not found",
+    });
     return;
   }
 
@@ -21,10 +22,10 @@ export const getUserController = async (req, res) => {
 
 export const getUserIdController = async (req, res) => {
   const { id } = req.params;
-  const findedUser = await getUserIdModel( id );
+  const findedUser = await getUserIdModel(id);
   if (!findedUser) {
     res.status(404).json({
-      message: "User not found"
+      message: "User not found",
     });
     return;
   }
@@ -40,7 +41,13 @@ export const createUserController = async (req, res) => {
       return;
     }
 
-    const newUsers = await createUserModel({ name, email, password, role, image });
+    const newUsers = await createUserModel({
+      name,
+      email,
+      password,
+      role,
+      image,
+    });
     res.json({
       data: newUsers,
       message: "User created successfully",
@@ -54,18 +61,25 @@ export const createUserController = async (req, res) => {
 export const putUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password, role, image } = req.body;
-    if (!(name && email && password && role && image)) {
+    const { name, email, role, image } = req.body;
+    if (!(name && email && role && image)) {
       res.status(400).json({ message: "All fields are required" });
       return;
     }
-    const hashedPassword = await hashPassword(password, confirmPassword, res);
-    const findedUser = await getUserIdModel(id );
+
+    const findedUser = await getUserIdModel(id);
     if (!findedUser) {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    const updateUser = await putUserModel({ id, name, email, password: hashedPassword, role, image });
+    const updateUser = await putUserModel({
+      id,
+      name,
+      email,
+      role,
+      image,
+    });
+
     res.json({
       data: updateUser,
       message: "User updated successfully",
@@ -76,10 +90,38 @@ export const putUserController = async (req, res) => {
   }
 };
 
+export const patchUserController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, role, image } = req.body;
+
+    const findedUser = await getUserIdModel(id);
+    if (!findedUser) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    
+    const updateUser = await putUserModel({
+      id,
+      name,
+      email,
+      role,
+      image,
+    });
+
+    res.json({
+      data: updateUser,
+      message: "User updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const deleteUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const findedUser = await getUserIdModel(id );
+    const findedUser = await getUserIdModel(id);
     if (!findedUser) {
       res.status(404).json({ message: "User not found" });
       return;
