@@ -44,25 +44,31 @@ export const registerUserController = async (req, res) => {
 
 export const loginUserController = async (req, res) => {
   try {
-    const { userEmail, password } = req.body;
-    const foundUser = await prisma.user.findMany({
+    const { password } = req.body;
+    
+    if(!req.body.email || !password) {
+      res.status(400).json({ message: "Email and password are required" });
+      return;
+    }
+
+    const foundUser = await prisma.user.findUnique({
       where: {
-        email: userEmail,
+        email: req.body.email,
       },
     });
 
-    if (foundUser.length === 0) {
+    if (!foundUser) {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    
-    const match = await comparePassword(password, foundUser[0].password);
+    console.log(foundUser);
+    const match = await comparePassword(password, foundUser.password);
     if (!match) {
       res.status(401).json({ message: "Wrong password" });
       return;
     }
 
-    const { id, name, email } = foundUser[0];
+    const { id, name, email } = foundUser;
     const accessToken = generateAccessToken({ id, name, email });
     const refreshToken = generateRefreshToken({ id, name, email });
     await refreshTokenUser({id, refreshToken});

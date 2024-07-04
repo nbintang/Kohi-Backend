@@ -36,6 +36,7 @@ export const createUserController = async (req, res) => {
   try {
     const { name, email, password, role, image } = req.body;
     const existedUser = await findEmailUser(email);
+    const hashedPassword = await hashPassword(password);
     if (existedUser) {
       res.status(409).json({ message: "User already exists" });
       return;
@@ -44,7 +45,7 @@ export const createUserController = async (req, res) => {
     const newUsers = await createUserModel({
       name,
       email,
-      password,
+      password: hashedPassword,
       role,
       image,
     });
@@ -100,7 +101,7 @@ export const patchUserController = async (req, res) => {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    
+
     const updateUser = await putUserModel({
       id,
       name,
