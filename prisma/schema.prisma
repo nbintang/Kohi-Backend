@@ -12,7 +12,7 @@ model User {
   name          String?
   email         String   @unique
   password      String?
-  image         String?
+  image         String?  @db.Text // Change to Text
   refresh_token String?  @db.Text
   role          Role
   createdAt     DateTime @default(now())
@@ -21,11 +21,12 @@ model User {
   reviews       Review[]
 }
 
+
 model Product {
   id          Int         @id @default(autoincrement())
   name        String
-  image       String?
-  description String?
+  image       String?     @db.Text // Change to Text
+  description String?     @db.Text // Change to Text
   price       Float
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now())
@@ -59,13 +60,14 @@ model Review {
   id          Int      @id @default(autoincrement())
   userId      Int
   productId   Int
-  description String
+  description String   @db.Text // Change to Text
   rating      Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   product     Product  @relation(fields: [productId], references: [id])
 }
+
 
 enum Role {
   ADMIN
